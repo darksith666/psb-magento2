@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <section id="payment">
+        <group id="psb" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1" translate="label comment" module="paygate">
+            <label>Paysbuy Payment Gateway</label>
+            <field id="active" translate="label">
+                <label>Enabled</label>
+                <source_model>adminhtml/system_config_source_yesno</source_model>
+            </field>
+            <field id="title" translate="label">
+                <label>Title</label>
+            </field>
+            <field id="merchant_id" translate="label">
+                <label>Merchant ID</label>
+            </field>
+            <field id="postbackground" translate="label">
+                <label>Post Background URL</label>
+            </field>
+            <field id="cgi_url" translate="label">
+                <label>Test Mode</label>
+                <source_model>adminhtml/system_config_source_yesno</source_model>
+            </field>
+            <field id="order_status" translate="label">
+                <label>New Order Status</label>
+                <source_model>adminhtml/system_config_source_order_status</source_model>
+            </field>
+            <field id="allowspecific" translate="label">
+                <label>Payment Applicable From</label>
+                <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+            </field>
+            <field id="specificcountry" translate="label">
+                <label>Countries Payment Applicable From</label>
+                <source_model>adminhtml/system_config_source_country</source_model>
+                <depends>
+                    <allowspecific>1</allowspecific>
+                </depends>
+            </field>
+        </group>
+    </section>
+</config>
