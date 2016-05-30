@@ -1,7 +1,7 @@
-# PAYSBUY extension for Magento eCommerce v1
+# PAYSBUY extension for Magento eCommerce v2
 
 ## Magento Version Compatibility
-- Magento (CE) 1.9.x
+- Magento (CE) 2.0.x
 
 ## Dependencies
 - None
