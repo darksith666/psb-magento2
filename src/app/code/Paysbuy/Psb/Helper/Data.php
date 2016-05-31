@@ -1,6 +1,12 @@
 <?php
+namespace Paysbuy\Psb\Helper;
 
-class Paysbuy_Psb_Helper_Data extends Mage_Core_Helper_Abstract
+
+class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
+        parent::__construct(
+            $context
+        );
+
 
 }//end class Paysbuy_Psb_Helper_Data

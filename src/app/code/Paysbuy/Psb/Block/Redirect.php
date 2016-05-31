@@ -1,13 +1,40 @@
 <?php
+namespace Paysbuy\Psb\Block;
 
 
-class Paysbuy_Psb_Block_Redirect extends Mage_Core_Block_Abstract
+
+class Redirect extends \Magento\Framework\View\Element\AbstractBlock
 {
+
+    /**
+     * @var \Paysbuy\Psb\Model\PsbFactory
+     */
+    protected $psbPsbFactory;
+
+    /**
+     * @var \Magento\Framework\Data\FormFactory
+     */
+    protected $formFactory;
+
+    public function __construct(
+        \Magento\Framework\View\Element\Context $context,
+        \Paysbuy\Psb\Model\PsbFactory $psbPsbFactory,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->formFactory = $formFactory;
+        $this->psbPsbFactory = $psbPsbFactory;
+        parent::__construct(
+            $context,
+            $data
+        );
+    }
+
     protected function _toHtml()
     {
-        $psb = Mage::getModel('psb/psb');
+        $psb = $this->psbPsbFactory->create();
 
-        $form = new Varien_Data_Form();
+        $form = $this->formFactory->create();
         $form->setAction($psb->getUrl())
             ->setId('psb_checkout')
             ->setName('psb_checkout')

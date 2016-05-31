@@ -1,9 +1,7 @@
 <?php
-namespace Paysbuy\Psb\Block;
 
 
-
-class Form extends \Magento\Payment\Block\Form
+class Paysbuy_Psb_Block_Form extends Mage_Payment_Block_Form
 {
     protected function _construct()
     {

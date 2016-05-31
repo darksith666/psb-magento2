@@ -1,13 +1,38 @@
 <?php
+namespace Paysbuy\Psb\Controller;
+
 /*
 *Paysbuy Psb Controller
 *By: Paysbuy
 */
 
-class Paysbuy_Psb_PsbController extends Mage_Core_Controller_Front_Action {
+class Psb extends \Magento\Framework\App\Action\Action {
+
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
+     * @var \Magento\Sales\Model\OrderFactory
+     */
+    protected $salesOrderFactory;
+
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Sales\Model\OrderFactory $salesOrderFactory
+    ) {
+        $this->checkoutSession = $checkoutSession;
+        $this->salesOrderFactory = $salesOrderFactory;
+        parent::__construct(
+            $context
+        );
+    }
+
 
 	public function redirectAction() {
-        $session = Mage::getSingleton('checkout/session');
+        $session = $this->checkoutSession;
 		$session->setPsbQuoteId($session->getQuoteId());
         $this->getResponse()->setBody($this->getLayout()->createBlock('psb/redirect')->toHtml());
         $session->unsQuoteId();
@@ -16,11 +41,11 @@ class Paysbuy_Psb_PsbController extends Mage_Core_Controller_Front_Action {
 	
 	public function cancelAction()
     {
-        $session = Mage::getSingleton('checkout/session');
+        $session = $this->checkoutSession;
         $session->setQuoteId($session->getPsbQuoteId(true));
         
         if ($session->getLastRealOrderId()) {
-            $order = Mage::getModel('sales/order')->loadByIncrementId($session->getLastRealOrderId());
+            $order = $this->salesOrderFactory->create()->loadByIncrementId($session->getLastRealOrderId());
             if ($order->getId()) {
                 $order->cancel()->save();
             }
@@ -30,13 +55,13 @@ class Paysbuy_Psb_PsbController extends Mage_Core_Controller_Front_Action {
 
     public function successAction()
     {
-        $session = Mage::getSingleton('checkout/session');
+        $session = $this->checkoutSession;
         $session->setQuoteId($session->getPsbQuoteId(true));
         
-        Mage::getSingleton('checkout/session')->getQuote()->setIsActive(false)->save();
+        $this->checkoutSession->getQuote()->setIsActive(false)->save();
 		
-        $order = Mage::getModel('sales/order');
-        $order->load(Mage::getSingleton('checkout/session')->getLastOrderId());
+        $order = $this->salesOrderFactory->create();
+        $order->load($this->checkoutSession->getLastOrderId());
     
 	    $order->save();
         
@@ -44,7 +69,7 @@ class Paysbuy_Psb_PsbController extends Mage_Core_Controller_Front_Action {
             $order->sendNewOrderEmail();
         }
 
-        Mage::getSingleton('checkout/session')->unsQuoteId();
+        $this->checkoutSession->unsQuoteId();
 		
     	
         $this->_redirect('checkout/onepage/success');
@@ -52,11 +77,11 @@ class Paysbuy_Psb_PsbController extends Mage_Core_Controller_Front_Action {
     
     public function failureAction()
     {
-    	$session = Mage::getSingleton('checkout/session');
+    	$session = $this->checkoutSession;
         $session->setQuoteId($session->getPsbQuoteId(true));
         
         if ($session->getLastRealOrderId()) {
-            $order = Mage::getModel('sales/order')->loadByIncrementId($session->getLastRealOrderId());
+            $order = $this->salesOrderFactory->create()->loadByIncrementId($session->getLastRealOrderId());
             if ($order->getId()) {
                 $order->cancel()->save();
             }

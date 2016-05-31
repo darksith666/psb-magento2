@@ -1,5 +1,7 @@
 <?php
-class Paysbuy_Psb_Model_Psb extends Mage_Payment_Model_Method_Abstract {
+namespace Paysbuy\Psb\Model;
+
+class Psb extends \Magento\Payment\Model\Method\AbstractMethod {
 	
 	const CGI_URL = 'https://www.paysbuy.com/paynow.aspx';
     const CGI_URL_TEST = 'https://demo.paysbuy.com/paynow.aspx';
@@ -7,7 +9,31 @@ class Paysbuy_Psb_Model_Psb extends Mage_Payment_Model_Method_Abstract {
 	protected $_code = 'psb';
 	protected $_formBlockType = 'psb/form';	
 	protected $_allowCurrencyCode = array('THB','AUD','GBP','EUR','HKD','JPY','NZD','SGD','CHF','USD');
-	
+
+    /**
+     * @var \Paysbuy\Psb\Model\Psb\Session
+     */
+    protected $psbPsbSession;
+
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
+     * @var \Magento\Sales\Model\Order
+     */
+    protected $salesOrder;
+
+    public function __construct(
+        \Paysbuy\Psb\Model\Psb\Session $psbPsbSession,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Sales\Model\Order $salesOrder
+    ) {
+        $this->psbPsbSession = $psbPsbSession;
+        $this->checkoutSession = $checkoutSession;
+        $this->salesOrder = $salesOrder;
+    }
     public function getUrl()
     {
     	$url = $this->getConfigData('cgi_url');
@@ -26,12 +52,12 @@ class Paysbuy_Psb_Model_Psb extends Mage_Payment_Model_Method_Abstract {
 	
 	public function getSession()
     {
-        return Mage::getSingleton('psb/psb_session');
+        return $this->psbPsbSession;
     }//end function getSession
 	
 	public function getCheckout()
     {
-        return Mage::getSingleton('checkout/session');
+        return $this->checkoutSession;
     }//end function getCheckout
 	
 	public function getQuote()
@@ -41,7 +67,7 @@ class Paysbuy_Psb_Model_Psb extends Mage_Payment_Model_Method_Abstract {
 	
 	public function getCheckoutFormFields()
 	{
-		$order = Mage::getSingleton('sales/order');
+		$order = $this->salesOrder;
 		$order->loadByIncrementId($this->getCheckout()->getLastRealOrderId());
 		
 		$currency_code = $order->getBaseCurrencyCode();
@@ -135,12 +161,12 @@ class Paysbuy_Psb_Model_Psb extends Mage_Payment_Model_Method_Abstract {
         parent::validate();
         $currency_code = $this->getQuote()->getBaseCurrencyCode();
         if (!in_array($currency_code,$this->_allowCurrencyCode)) {
-            Mage::throwException(Mage::helper('psb')->__('Selected currency code ('.$currency_code.') is not compatabile with Paysbuy'));
+            throw new \Magento\Framework\Exception\LocalizedException(__('Selected currency code ('.$currency_code.') is not compatabile with Paysbuy'));
         }
         return $this;
     }//end function validate
 	
-	public function onOrderValidate(Mage_Sales_Model_Order_Payment $payment)
+	public function onOrderValidate(\Magento\Sales\Model\Order\Payment $payment)
     {
        return $this;
     }//end function onOrderValidate
