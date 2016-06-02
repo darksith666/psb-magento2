@@ -13,10 +13,10 @@
             <field id="merchant_id" translate="label">
                 <label>Merchant ID</label>
             </field>
-            <field id="postbackground" translate="label">
-                <label>Post Background URL</label>
+            <field id="postback_url" translate="label">
+                <label>Postback URL</label>
             </field>
-            <field id="cgi_url" translate="label">
+            <field id="test_mode" translate="label">
                 <label>Test Mode</label>
                 <source_model>adminhtml/system_config_source_yesno</source_model>
             </field>

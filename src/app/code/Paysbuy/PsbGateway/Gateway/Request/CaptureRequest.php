@@ -55,7 +55,7 @@ class CaptureRequest implements BuilderInterface
             'TXN_TYPE' => 'S',
             'TXN_ID' => $payment->getLastTransId(),
             'MERCHANT_KEY' => $this->config->getValue(
-                'merchant_gateway_key',
+                'merchant_id',
                 $order->getStoreId()
             )
         ];

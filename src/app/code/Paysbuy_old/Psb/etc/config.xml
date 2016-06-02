@@ -5,7 +5,7 @@
             <psb>
                 <model>psb/psb</model>
                 <active>1</active>
-                <cgi_url>0</cgi_url>
+                <test_mode>0</test_mode>
                 <order_status>pending</order_status>
                 <title>Paysbuy Payment Gateway</title>
                 <merchant_id>example@paysbuy.com</merchant_id>

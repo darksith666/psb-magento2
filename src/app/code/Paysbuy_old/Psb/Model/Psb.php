@@ -36,13 +36,13 @@ class Psb extends \Magento\Payment\Model\Method\AbstractMethod {
     }
     public function getUrl()
     {
-    	$url = $this->getConfigData('cgi_url');
+    	$test_mode = $this->getConfigData('test_mode');
     	
-    	if($url == '0')
+    	if($test == '0')
     	{
     		$url = self::CGI_URL;
     	}
-		else if($url == '1')
+		else if($test_mode == '1')
 		{
 			$url = self::CGI_URL_TEST;
 		}
@@ -120,7 +120,7 @@ class Psb extends \Magento\Payment\Model\Method\AbstractMethod {
 		$paysbuy_args['item_name'] 	= sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
 		$orderReferenceValue = $this->getCheckout()->getLastRealOrderId();
 		$merchantId = $this->getConfigData('merchant_id');
-		$postbackground = $this->getConfigData('postbackground');
+		$postback_url = $this->getConfigData('postback_url');
 		$url_r = Mage::getUrl('receive_data/receive_front.php');
 		$url = str_replace("index.php/","",$url_r);
 		$psb = 'psb';
@@ -134,7 +134,7 @@ class Psb extends \Magento\Payment\Model\Method\AbstractMethod {
 			'inv'						=> $orderReferenceValue,
 			'opt_fix_redirect'			=> '1',
 			'postURL'					=> $url,
-			'reqURL'					=> $postbackground,
+			'reqURL'					=> $postback_url,
 		);
 
 		$filtered_fields = array();
