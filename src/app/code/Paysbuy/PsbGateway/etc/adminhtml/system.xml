@@ -32,6 +32,10 @@
                     <label>Payment Action</label>
                     <source_model>Paysbuy\PsbGateway\Model\Adminhtml\Source\PaymentAction</source_model>
                 </field>
+                <field id="order_status" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="130" showInDefault="9"
                        showInWebsite="1" showInStore="0">
                     <label>Payment From Applicable Countries</label>
