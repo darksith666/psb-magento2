@@ -4,12 +4,12 @@
         <payment>
             <psb>
                 <model>psb/psb</model>
+                <title>Paysbuy Payment Gateway</title>
+                <payment_action>sale</payment_action>
                 <active>1</active>
                 <test_mode>0</test_mode>
                 <order_status>pending</order_status>
-                <title>Paysbuy Payment Gateway</title>
                 <merchant_id>example@paysbuy.com</merchant_id>
-                <payment_action>sale</payment_action>
                 <allowspecific>0</allowspecific>
                 <sort_order>1</sort_order>
             </psb>
