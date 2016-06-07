@@ -17,7 +17,7 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 {
-    protected $_code = 'coinbase';
+    protected $_code = 'psb';
     protected $_isInitializeNeeded = true;
 
     /**

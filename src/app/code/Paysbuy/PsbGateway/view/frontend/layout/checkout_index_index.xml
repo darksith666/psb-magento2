@@ -21,7 +21,7 @@
                                                                     <item name="component" xsi:type="string">Paysbuy_PsbGateway/js/view/payment/psb-payments</item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="psb" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">false</item>
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
                                                                     </item>
                                                                 </item>

@@ -2,17 +2,15 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <payment>
-            <psb_gateway>
+            <psb>
                 <model>Paysbuy\PsbGateway\Model\PaymentMethod</model>
                 <title>PAYSBUY</title>
-                <payment_action>sale</payment_action>
-                <active>1</active>
+                <payment_action>Sale</payment_action>
+                <visible_on_cart>1</visible_on_cart>
+                <order_status>pending_payment</order_status>
                 <test_mode>0</test_mode>
-                <order_status>pending</order_status>
                 <merchant_id>example@paysbuy.com</merchant_id>
-                <allowspecific>0</allowspecific>
-                <sort_order>1</sort_order>
-            </psb_gateway>
+            </psb>
         </payment>
     </default>
 </config>
