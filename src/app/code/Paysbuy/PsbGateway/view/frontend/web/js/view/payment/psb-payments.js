@@ -12,8 +12,8 @@ define(
         'use strict';
         rendererList.push(
             {
-                type: 'coinbase',
-                component: 'Coinbase_Magento2PaymentGateway/js/view/payment/method-renderer/coinbase-method'
+                type: 'psb',
+                component: 'Paysbuy_PsbGateway/js/view/payment/method-renderer/psb-method'
             }
         );
         /** Add view logic here if needed */

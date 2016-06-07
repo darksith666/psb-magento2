@@ -40,6 +40,7 @@ class Start extends \Magento\Framework\App\Action\Action
     */
     public function execute()
     {
+        die("REDIRECT TO PAYSBUY HERE!!!");
         $this->getResponse()->setRedirect(
             $this->_paymentMethod->getCheckoutUrl($this->getOrder())
         );

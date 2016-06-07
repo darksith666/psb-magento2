@@ -17,11 +17,11 @@
                                                         <item name="renders" xsi:type="array">
                                                             <!-- merge payment method renders here -->
                                                             <item name="children" xsi:type="array">
-                                                                <item name="coinbase" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Coinbase_Magento2PaymentGateway/js/view/payment/coinbase-payments</item>
+                                                                <item name="psb" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Paysbuy_PsbGateway/js/view/payment/psb-payments</item>
                                                                     <item name="methods" xsi:type="array">
-                                                                        <item name="coinbase" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="psb" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">false</item>
                                                                         </item>
                                                                     </item>
                                                                 </item>

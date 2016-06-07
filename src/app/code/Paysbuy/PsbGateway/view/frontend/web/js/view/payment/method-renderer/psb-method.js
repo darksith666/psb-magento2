@@ -10,14 +10,14 @@ define(
 
         return Component.extend({
             defaults: {
-                template: 'Coinbase_Magento2PaymentGateway/payment/coinbase-form'
+                template: 'Paysbuy_PsbGateway/payment/psb-form'
             },
             redirectAfterPlaceOrder: false,
             /**
              * After place order callback
              */
             afterPlaceOrder: function () {
-                window.location.replace(url.build('coinbase/checkout/start'));
+                window.location.replace(url.build('psb/checkout/start'));
             }
         });
     }
