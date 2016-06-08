@@ -8,235 +8,250 @@
 
 namespace Paysbuy\PsbGateway\Model;
 
-use Coinbase\Wallet\Client;
-use Coinbase\Wallet\Configuration;
-use Coinbase\Wallet\Resource\Checkout;
-use Coinbase\Wallet\Value\Money;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Order\Payment\Transaction;
 
-class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
-{
-    protected $_code = 'psb';
-    protected $_isInitializeNeeded = true;
+class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 
-    /**
-    * @var \Magento\Framework\Exception\LocalizedExceptionFactory
-    */
-    protected $_exception;
+		const CGI_URL = 'https://www.paysbuy.com/paynow.aspx';
+		const CGI_URL_TEST = 'https://demo.paysbuy.com/paynow.aspx';
 
-    /**
-    * @var \Magento\Sales\Api\TransactionRepositoryInterface
-    */
-    protected $_transactionRepository;
+		protected $_code = 'psb';
 
-    /**
-    * @var Transaction\BuilderInterface
-    */
-    protected $_transactionBuilder;
+		/**
+		* @var \Magento\Framework\Exception\LocalizedExceptionFactory
+		*/
+		protected $_exception;
 
-    /**
-    * @var \Magento\Framework\UrlInterface
-    */
-    protected $_urlBuilder;
+		/**
+		* @var \Magento\Sales\Api\TransactionRepositoryInterface
+		*/
+		protected $_transactionRepository;
 
-    /**
-    * @var \Magento\Sales\Model\OrderFactory
-    */
-    protected $_orderFactory;
+		/**
+		* @var Transaction\BuilderInterface
+		*/
+		protected $_transactionBuilder;
 
-    /**
-    * @var \Magento\Store\Model\StoreManagerInterface
-    */
-    protected $_storeManager;
+		/**
+		* @var \Magento\Framework\UrlInterface
+		*/
+		protected $_urlBuilder;
 
-    /**
-    * @param \Magento\Framework\UrlInterface $urlBuilder
-    * @param \Magento\Framework\Exception\LocalizedExceptionFactory $exception
-    * @param \Magento\Sales\Api\TransactionRepositoryInterface $transactionRepository
-    * @param Transaction\BuilderInterface $transactionBuilder
-    * @param \Magento\Sales\Model\OrderFactory $orderFactory
-    * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-    * @param \Magento\Framework\Model\Context $context
-    * @param \Magento\Framework\Registry $registry
-    * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
-    * @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
-    * @param \Magento\Payment\Helper\Data $paymentData
-    * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-    * @param \Magento\Payment\Model\Method\Logger $logger
-    * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-    * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
-    * @param array $data
-    */
-    public function __construct(
-      \Magento\Framework\UrlInterface $urlBuilder,
-      \Magento\Framework\Exception\LocalizedExceptionFactory $exception,
-      \Magento\Sales\Api\TransactionRepositoryInterface $transactionRepository,
-      \Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder,
-      \Magento\Sales\Model\OrderFactory $orderFactory,
-      \Magento\Store\Model\StoreManagerInterface $storeManager,
-      \Magento\Framework\Model\Context $context,
-      \Magento\Framework\Registry $registry,
-      \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
-      \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory,
-      \Magento\Payment\Helper\Data $paymentData,
-      \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-      \Magento\Payment\Model\Method\Logger $logger,
-      \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-      \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-      array $data = []
-    ) {
-      $this->_urlBuilder = $urlBuilder;
-      $this->_exception = $exception;
-      $this->_transactionRepository = $transactionRepository;
-      $this->_transactionBuilder = $transactionBuilder;
-      $this->_orderFactory = $orderFactory;
-      $this->_storeManager = $storeManager;
+		/**
+		* @var \Magento\Sales\Model\OrderFactory
+		*/
+		protected $_orderFactory;
 
-      parent::__construct(
-          $context,
-          $registry,
-          $extensionFactory,
-          $customAttributeFactory,
-          $paymentData,
-          $scopeConfig,
-          $logger,
-          $resource,
-          $resourceCollection,
-          $data
-      );
-    }
+		/**
+		* @var \Magento\Store\Model\StoreManagerInterface
+		*/
+		protected $_storeManager;
 
-    /**
-     * Instantiate state and set it to state object.
-     *
-     * @param string                        $paymentAction
-     * @param \Magento\Framework\DataObject $stateObject
-     */
-    public function initialize($paymentAction, $stateObject)
-    {
-        $payment = $this->getInfoInstance();
-        $order = $payment->getOrder();
-        $order->setCanSendNewEmailFlag(false);
+		/**
+		* @param \Magento\Framework\UrlInterface $urlBuilder
+		* @param \Magento\Framework\Exception\LocalizedExceptionFactory $exception
+		* @param \Magento\Sales\Api\TransactionRepositoryInterface $transactionRepository
+		* @param Transaction\BuilderInterface $transactionBuilder
+		* @param \Magento\Sales\Model\OrderFactory $orderFactory
+		* @param \Magento\Store\Model\StoreManagerInterface $storeManager
+		* @param \Magento\Framework\Model\Context $context
+		* @param \Magento\Framework\Registry $registry
+		* @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
+		* @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
+		* @param \Magento\Payment\Helper\Data $paymentData
+		* @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+		* @param \Magento\Payment\Model\Method\Logger $logger
+		* @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+		* @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
+		* @param array $data
+		*/
+		public function __construct(
+			\Magento\Framework\UrlInterface $urlBuilder,
+			\Magento\Framework\Exception\LocalizedExceptionFactory $exception,
+			\Magento\Sales\Api\TransactionRepositoryInterface $transactionRepository,
+			\Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface $transactionBuilder,
+			\Magento\Sales\Model\OrderFactory $orderFactory,
+			\Magento\Store\Model\StoreManagerInterface $storeManager,
+			\Magento\Framework\Model\Context $context,
+			\Magento\Framework\Registry $registry,
+			\Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
+			\Magento\Framework\Api\AttributeValueFactory $customAttributeFactory,
+			\Magento\Payment\Helper\Data $paymentData,
+			\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+			\Magento\Payment\Model\Method\Logger $logger,
+			\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+			\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+			array $data = []
+		) {
+			$this->_urlBuilder = $urlBuilder;
+			$this->_exception = $exception;
+			$this->_transactionRepository = $transactionRepository;
+			$this->_transactionBuilder = $transactionBuilder;
+			$this->_orderFactory = $orderFactory;
+			$this->_storeManager = $storeManager;
 
-        $stateObject->setState(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
-        $stateObject->setStatus('pending_payment');
-        $stateObject->setIsNotified(false);
-    }
+			parent::__construct(
+					$context,
+					$registry,
+					$extensionFactory,
+					$customAttributeFactory,
+					$paymentData,
+					$scopeConfig,
+					$logger,
+					$resource,
+					$resourceCollection,
+					$data
+			);
+		}
 
-    public function getClient()
-    {
-        $apiKey = $this->getConfigData('api_key');
-        $apiSecret = $this->getConfigData('api_secret');
-        if ($apiKey == null || $apiSecret == null) {
-            $this->_exception->create(
-            ['phrase' => __('Coinbase API keys not configured.')]
-        );
-        }
+		/**
+		 * Instantiate state and set it to state object.
+		 *
+		 * @param string                        $paymentAction
+		 * @param \Magento\Framework\DataObject $stateObject
+		 */
+		public function initialize($paymentAction, $stateObject)
+		{
+				$payment = $this->getInfoInstance();
+				$order = $payment->getOrder();
+				$order->setCanSendNewEmailFlag(false);
 
-        $configuration = Configuration::apiKey($apiKey, $apiSecret);
+				$stateObject->setState(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+				$stateObject->setStatus('pending_payment');
+				$stateObject->setIsNotified(false);
+		}
 
-        return Client::create($configuration);
-    }
+		public function getClient()
+		{
+				$apiKey = $this->getConfigData('api_key');
+				$apiSecret = $this->getConfigData('api_secret');
+				if ($apiKey == null || $apiSecret == null) {
+						$this->_exception->create(
+						['phrase' => __('Coinbase API keys not configured.')]
+				);
+				}
 
-    public function getCheckoutUrl($order, $storeId = null)
-    {
-        $orderId = $order->getIncrementId();
+				$configuration = Configuration::apiKey($apiKey, $apiSecret);
 
-        // Protect against callback replay attacks
-        $replayToken = bin2hex(openssl_random_pseudo_bytes(16));
-        $payment = $order->getPayment();
-        $payment->setAdditionalInformation("replay_token", $replayToken)->save();
+				return Client::create($configuration);
+		}
 
-        $params = array(
-            'amount' => new Money(
-                $order->getTotalDue(),
-                $order->getBaseCurrencyCode()
-            ),
-            'name'              => 'Order #'.$orderId,
-            'description'       => 'Order #'.$orderId,
-            'metadata'          => array(
-                'order_id'     => $orderId,
-                'replay_token' => $replayToken
-            ),
-            'notifications_url' => $this->getNotifyUrl($storeId),
-            'success_url'       => $this->getSuccessUrl($storeId),
-        );
+		public function getCheckoutUrl($order, $storeId = null)
+		{
+				$orderId = $order->getIncrementId();
 
-        try {
-            $checkout = new Checkout($params);
-            $this->getClient()->createCheckout($checkout);
-            $code = $checkout->getEmbedCode();
-        } catch (Exception $e) {
-            $message = print_r($e, true);
-            $this->_debug("Coinbase: Error generating checkout code $message");
-            $this->_exception->create(
-                ['phrase' => __('There was an error redirecting you to Coinbase. Please select a different payment method.')]
-            );
-        }
+				// Protect against callback replay attacks
+				$replayToken = bin2hex(openssl_random_pseudo_bytes(16));
+				$payment = $order->getPayment();
+				$payment->setAdditionalInformation("replay_token", $replayToken)->save();
 
-        $this->_logger->addDebug("Generated Coinbase checkout for order $orderId");
+				$params = array(
+						'amount' => new Money(
+								$order->getTotalDue(),
+								$order->getBaseCurrencyCode()
+						),
+						'name'              => 'Order #'.$orderId,
+						'description'       => 'Order #'.$orderId,
+						'metadata'          => array(
+								'order_id'     => $orderId,
+								'replay_token' => $replayToken
+						),
+						'notifications_url' => $this->getNotifyUrl($storeId),
+						'success_url'       => $this->getSuccessUrl($storeId),
+				);
 
-        return 'https://www.coinbase.com/checkouts/'.$code;
-    }
+				try {
+						$checkout = new Checkout($params);
+						$this->getClient()->createCheckout($checkout);
+						$code = $checkout->getEmbedCode();
+				} catch (Exception $e) {
+						$message = print_r($e, true);
+						$this->_debug("Coinbase: Error generating checkout code $message");
+						$this->_exception->create(
+								['phrase' => __('There was an error redirecting you to Coinbase. Please select a different payment method.')]
+						);
+				}
 
-    public function getOrderPlaceRedirectUrl($storeId = null)
-    {
-        return $this->_getUrl('coinbase/start', $storeId);
-    }
+				$this->_logger->addDebug("Generated Coinbase checkout for order $orderId");
 
-    /**
-     * Get return URL.
-     *
-     * @param int|null $storeId
-     *
-     * @return string
-     */
-    public function getSuccessUrl($storeId = null)
-    {
-        return $this->_getUrl('coinbase/checkout/success', $storeId);
-    }
+				return 'https://www.coinbase.com/checkouts/'.$code;
+		}
 
-    /**
-     * Get notify (IPN) URL.
-     *
-     * @param int|null $storeId
-     *
-     * @return string
-     */
-    public function getNotifyUrl($storeId = null)
-    {
-        return $this->_getUrl('coinbase/ipn/callback', $storeId, false);
-    }
+		public function getOrderPlaceRedirectUrl($storeId = null)
+		{
+				return $this->_getUrl('coinbase/start', $storeId);
+		}
 
-    /**
-     * Get cancel URL.
-     *
-     * @param int|null $storeId
-     *
-     * @return string
-     */
-    public function getCancelUrl($storeId = null)
-    {
-        return $this->_getUrl('coinbase/checkout/cancel', $storeId);
-    }
+		/**
+		 * Get return URL.
+		 *
+		 * @param int|null $storeId
+		 *
+		 * @return string
+		 */
+		public function getSuccessUrl($storeId = null)
+		{
+				return $this->_getUrl('coinbase/checkout/success', $storeId);
+		}
 
-    /**
-     * Build URL for store.
-     *
-     * @param string    $path
-     * @param int       $storeId
-     * @param bool|null $secure
-     *
-     * @return string
-     */
-    protected function _getUrl($path, $storeId, $secure = null)
-    {
-        $store = $this->_storeManager->getStore($storeId);
+		/**
+		 * Get notify (IPN) URL.
+		 *
+		 * @param int|null $storeId
+		 *
+		 * @return string
+		 */
+		public function getNotifyUrl($storeId = null)
+		{
+				return $this->_getUrl('coinbase/ipn/callback', $storeId, false);
+		}
 
-        return $this->_urlBuilder->getUrl(
-            $path,
-            ['_store' => $store, '_secure' => $secure === null ? $store->isCurrentlySecure() : $secure]
-        );
-    }
+		/**
+		 * Get cancel URL.
+		 *
+		 * @param int|null $storeId
+		 *
+		 * @return string
+		 */
+		public function getCancelUrl($storeId = null)
+		{
+				return $this->_getUrl('coinbase/checkout/cancel', $storeId);
+		}
+
+		/**
+		 * Build URL for store.
+		 *
+		 * @param string    $path
+		 * @param int       $storeId
+		 * @param bool|null $secure
+		 *
+		 * @return string
+		 */
+		protected function _getUrl($path, $storeId, $secure = null)
+		{
+				$store = $this->_storeManager->getStore($storeId);
+
+				return $this->_urlBuilder->getUrl(
+						$path,
+						['_store' => $store, '_secure' => $secure === null ? $store->isCurrentlySecure() : $secure]
+				);
+		}
+
+		/**
+		 * Get main URL for PAYSBUY gateway
+		 *
+		 * @return string
+		 */
+		public function getUrl() {
+
+			$test_mode = $this->getConfigData('test_mode');
+			if ($test_mode == '0') {
+				$url = self::CGI_URL;
+			} else {
+				$url = self::CGI_URL_TEST;
+			}
+			
+			return $url;
+		}
 }
