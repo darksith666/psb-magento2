@@ -16,11 +16,6 @@ class Success extends \Magento\Framework\App\Action\Action
     protected $_checkoutSession;
 
     /**
-     * @var \Magento\Framework\UrlInterface
-     */
-    protected $_urlBuilder;
-
-    /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
@@ -28,17 +23,14 @@ class Success extends \Magento\Framework\App\Action\Action
     /**
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Magento\Framework\UrlInterface $urlBuilder
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      */
     public function __construct(
       \Magento\Framework\App\Action\Context $context,
       \Magento\Checkout\Model\Session $checkoutSession,
-      \Magento\Framework\UrlInterface $urlBuilder,
       \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->_checkoutSession = $checkoutSession;
-        $this->_urlBuilder = $urlBuilder;
         $this->_storeManager = $storeManager;
         parent::__construct($context);
     }
@@ -48,6 +40,7 @@ class Success extends \Magento\Framework\App\Action\Action
     */
     public function execute()
     {
+        die('Success!!!');
         $this->getResponse()->setRedirect(
             $this->_getUrl('checkout/onepage/success')
         );

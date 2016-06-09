@@ -35,7 +35,7 @@ class Redirect extends \Magento\Framework\View\Element\AbstractBlock
 		$payMeth = $this->_paymentMethodFactory->create();
 
 		$form = $this->_formFactory->create();
-		$form->setAction($payMeth->getUrl())
+		$form->setAction($payMeth->getGatewayUrl())
 			->setId('psb_checkout')
 			->setName('psb_checkout')
 			->setMethod('post')

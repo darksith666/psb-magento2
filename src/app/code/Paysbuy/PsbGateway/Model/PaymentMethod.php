@@ -16,7 +16,27 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		const CGI_URL = 'https://www.paysbuy.com/paynow.aspx';
 		const CGI_URL_TEST = 'https://demo.paysbuy.com/paynow.aspx';
 
+		const DEFAULT_CURRENCY = 'THB';
+
+		const URL_SUCCESS = 'psb/checkout/success';
+		const URL_CALLBACK = 'psb/ipn/callback';
+
 		protected $_code = 'psb';
+
+		// Currency code conversions
+		static protected $_currCodes = [
+			'THB' => 764,
+			'AUD' => 036,		
+			'GBP' => 826,	
+			'EUR' => 978,		
+			'HKD' => 344,		
+			'JPY' => 392,		
+			'NZD' => 554,
+			'SGD' => 702,	
+			'CHF' => 756,	
+			'USD' => 840	
+		];
+
 
 		/**
 		* @var \Magento\Framework\Exception\LocalizedExceptionFactory
@@ -122,65 +142,8 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 				$stateObject->setIsNotified(false);
 		}
 
-		public function getClient()
-		{
-				$apiKey = $this->getConfigData('api_key');
-				$apiSecret = $this->getConfigData('api_secret');
-				if ($apiKey == null || $apiSecret == null) {
-						$this->_exception->create(
-						['phrase' => __('Coinbase API keys not configured.')]
-				);
-				}
-
-				$configuration = Configuration::apiKey($apiKey, $apiSecret);
-
-				return Client::create($configuration);
-		}
-
-		public function getCheckoutUrl($order, $storeId = null)
-		{
-				$orderId = $order->getIncrementId();
-
-				// Protect against callback replay attacks
-				$replayToken = bin2hex(openssl_random_pseudo_bytes(16));
-				$payment = $order->getPayment();
-				$payment->setAdditionalInformation("replay_token", $replayToken)->save();
-
-				$params = array(
-						'amount' => new Money(
-								$order->getTotalDue(),
-								$order->getBaseCurrencyCode()
-						),
-						'name'              => 'Order #'.$orderId,
-						'description'       => 'Order #'.$orderId,
-						'metadata'          => array(
-								'order_id'     => $orderId,
-								'replay_token' => $replayToken
-						),
-						'notifications_url' => $this->getNotifyUrl($storeId),
-						'success_url'       => $this->getSuccessUrl($storeId),
-				);
-
-				try {
-						$checkout = new Checkout($params);
-						$this->getClient()->createCheckout($checkout);
-						$code = $checkout->getEmbedCode();
-				} catch (Exception $e) {
-						$message = print_r($e, true);
-						$this->_debug("Coinbase: Error generating checkout code $message");
-						$this->_exception->create(
-								['phrase' => __('There was an error redirecting you to Coinbase. Please select a different payment method.')]
-						);
-				}
-
-				$this->_logger->addDebug("Generated Coinbase checkout for order $orderId");
-
-				return 'https://www.coinbase.com/checkouts/'.$code;
-		}
-
-		public function getOrderPlaceRedirectUrl($storeId = null)
-		{
-				return $this->_getUrl('coinbase/start', $storeId);
+		public static function getCurrencyCode($alpha) {
+			return self::$_currCodes[isset(self::$_currCodes[$alpha]) ? $alpha : self::DEFAULT_CURRENCY]; 
 		}
 
 		/**
@@ -192,7 +155,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 */
 		public function getSuccessUrl($storeId = null)
 		{
-				return $this->_getUrl('coinbase/checkout/success', $storeId);
+				return $this->_getUrl(self::URL_SUCCESS, $storeId);
 		}
 
 		/**
@@ -204,7 +167,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 */
 		public function getNotifyUrl($storeId = null)
 		{
-				return $this->_getUrl('coinbase/ipn/callback', $storeId, false);
+				return $this->_getUrl(self::URL_CALLBACK, $storeId, false);
 		}
 
 		/**
@@ -243,7 +206,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 *
 		 * @return string
 		 */
-		public function getUrl() {
+		public function getGatewayUrl() {
 
 			$test_mode = $this->getConfigData('test_mode');
 			if ($test_mode == '0') {
@@ -262,47 +225,12 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 */
 		public function getCheckoutFormFields($order) {
 			
-			$currency_code = $order->getBaseCurrencyCode();
+			$cur = self::getCurrencyCode($order->getBaseCurrencyCode());
 			
 			$grandTotalAmount = sprintf('%.2f', $order->getGrandTotal());
-			
-			switch($currency_code){
-			case 'THB':
-				$cur = 764;
-				break;
-			case 'AUD':
-				$cur = 036;
-				break;		
-			case 'GBP':
-				$cur = 826;
-				break;	
-			case 'EUR':
-				$cur = 978;
-				break;		
-			case 'HKD':
-				$cur = 344;
-				break;		
-			case 'JPY':
-				$cur = 392;
-				break;		
-			case 'NZD':
-				$cur = 554;
-				break;
-			case 'SGD':
-				$cur = 702;
-				break;	
-			case 'CHF':
-				$cur = 756;
-				break;	
-			case 'USD':
-				$cur = 840;
-				break;	
-			default:
-				$cur = 764;
-			}	 
-			
+						
 			$orderId = $order->getIncrementId();
-			$item_names = array();
+			$item_names = [];
 			$items = $order->getItemsCollection();
 			foreach ($items as $item){
 				$item_name = $item->getName();
@@ -312,24 +240,25 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			$paysbuy_args['item_name'] 	= sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
 			$orderReferenceValue = $orderId; // TODO - check if this is right - used to be $this->getCheckout()->getLastRealOrderId();
 			$merchantId = $this->getConfigData('merchant_id');
-			$postback_url = $this->getConfigData('postback_url');
-			$url_r = $this->_getUrl('receive_data/receive_front.php', null);
-			$url = str_replace("index.php/","",$url_r);
+			$postback_url = $this->getNotifyUrl();
+			// $url_r = $this->_getUrl('receive_data/receive_front.php', null);
+			// $url = str_replace("index.php/", "", $url_r);
+			$url = $this->getSuccessUrl();
 			$psb = 'psb';
 			
-			$fields = array(
-				'psb'			            => $psb,
-				'biz'						=> $merchantId,
-				'amt'						=> $grandTotalAmount, 
-				'currencyCode'				=> $cur,
-				'itm'    				    => $paysbuy_args['item_name'],
-				'inv'						=> $orderReferenceValue,
-				'opt_fix_redirect'			=> '1',
-				'postURL'					=> $url,
-				'reqURL'					=> $postback_url,
-			);
+			$fields = [
+				'psb'								=> $psb,
+				'biz'								=> $merchantId,
+				'amt'								=> $grandTotalAmount, 
+				'currencyCode'			=> $cur,
+				'itm'								=> $paysbuy_args['item_name'],
+				'inv'								=> $orderReferenceValue,
+				'opt_fix_redirect'	=> '1',
+				'postURL'						=> $url,
+				'reqURL'						=> $postback_url,
+			];
 
-			$filtered_fields = array();
+			$filtered_fields = [];
 			foreach ($fields as $k=>$v) {
 				$value = str_replace("&","and",$v);
 				$filtered_fields[$k] =  $value;

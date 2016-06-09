@@ -40,16 +40,13 @@ class Start extends \Magento\Framework\App\Action\Action
     */
     public function execute()
     {
-        $order = $this->_checkoutSession->getLastRealOrder();
+        $order = $this->_getOrder();
 
         $blockParams = ['data' => ['order' => $order]];
 
         $html = $this->_view->getLayout()->createBlock('Paysbuy\PsbGateway\Block\Redirect', '', $blockParams)->toHtml();
         $this->getResponse()->setBody($html);
                 
-        // $this->getResponse()->setRedirect(
-        //     $this->_paymentMethod->getCheckoutUrl($this->getOrder())
-        // );
     }
 
     /**
@@ -57,7 +54,7 @@ class Start extends \Magento\Framework\App\Action\Action
     *
     * @return \Magento\Sales\Model\Order
     */
-    protected function getOrder()
+    protected function _getOrder()
     {
         return $this->_checkoutSession->getLastRealOrder();
     }

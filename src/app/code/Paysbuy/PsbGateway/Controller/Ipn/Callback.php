@@ -64,7 +64,7 @@ class Callback extends AppAction
     ) {
         $this->_paymentMethod = $paymentMethod;
         $this->_orderFactory = $orderFactory;
-        $this->_client = $this->_paymentMethod->getClient();
+        ////// $this->_client = $this->_paymentMethod->getClient();
         $this->_orderSender = $orderSender;
         $this->_logger = $logger;
         parent::__construct($context);
@@ -75,6 +75,7 @@ class Callback extends AppAction
     */
     public function execute()
     {
+        die('Callback!');
         try {
             // Cryptographically verify authenticity of callback
             $this->_verifyCallbackAuthenticity();
