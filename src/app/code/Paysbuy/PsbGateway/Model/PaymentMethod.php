@@ -254,4 +254,89 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			
 			return $url;
 		}
+
+		/**
+		 * Get field key=>value list for the checkout form
+		 *
+		 * @return array
+		 */
+		public function getCheckoutFormFields($order) {
+			
+			$currency_code = $order->getBaseCurrencyCode();
+			
+			$grandTotalAmount = sprintf('%.2f', $order->getGrandTotal());
+			
+			switch($currency_code){
+			case 'THB':
+				$cur = 764;
+				break;
+			case 'AUD':
+				$cur = 036;
+				break;		
+			case 'GBP':
+				$cur = 826;
+				break;	
+			case 'EUR':
+				$cur = 978;
+				break;		
+			case 'HKD':
+				$cur = 344;
+				break;		
+			case 'JPY':
+				$cur = 392;
+				break;		
+			case 'NZD':
+				$cur = 554;
+				break;
+			case 'SGD':
+				$cur = 702;
+				break;	
+			case 'CHF':
+				$cur = 756;
+				break;	
+			case 'USD':
+				$cur = 840;
+				break;	
+			default:
+				$cur = 764;
+			}	 
+			
+			$orderId = $order->getIncrementId();
+			$item_names = array();
+			$items = $order->getItemsCollection();
+			foreach ($items as $item){
+				$item_name = $item->getName();
+				$qty = number_format($item->getQtyOrdered(), 0, '.', ' ');
+				$item_names[] = $item_name . ' x ' . $qty;
+			}	
+			$paysbuy_args['item_name'] 	= sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
+			$orderReferenceValue = $orderId; // TODO - check if this is right - used to be $this->getCheckout()->getLastRealOrderId();
+			$merchantId = $this->getConfigData('merchant_id');
+			$postback_url = $this->getConfigData('postback_url');
+			$url_r = $this->_getUrl('receive_data/receive_front.php', null);
+			$url = str_replace("index.php/","",$url_r);
+			$psb = 'psb';
+			
+			$fields = array(
+				'psb'			            => $psb,
+				'biz'						=> $merchantId,
+				'amt'						=> $grandTotalAmount, 
+				'currencyCode'				=> $cur,
+				'itm'    				    => $paysbuy_args['item_name'],
+				'inv'						=> $orderReferenceValue,
+				'opt_fix_redirect'			=> '1',
+				'postURL'					=> $url,
+				'reqURL'					=> $postback_url,
+			);
+
+			$filtered_fields = array();
+			foreach ($fields as $k=>$v) {
+				$value = str_replace("&","and",$v);
+				$filtered_fields[$k] =  $value;
+			}
+			
+			return $filtered_fields;
+
+		}
+
 }

@@ -40,8 +40,11 @@ class Start extends \Magento\Framework\App\Action\Action
     */
     public function execute()
     {
-        ///// $this->_view->getLayout());
-        $html = $this->_view->getLayout()->createBlock('Paysbuy\PsbGateway\Block\Redirect')->toHtml();
+        $order = $this->_checkoutSession->getLastRealOrder();
+
+        $blockParams = ['data' => ['order' => $order]];
+
+        $html = $this->_view->getLayout()->createBlock('Paysbuy\PsbGateway\Block\Redirect', '', $blockParams)->toHtml();
         $this->getResponse()->setBody($html);
                 
         // $this->getResponse()->setRedirect(
