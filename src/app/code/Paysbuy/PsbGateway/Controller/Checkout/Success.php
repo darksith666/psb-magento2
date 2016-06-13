@@ -40,7 +40,6 @@ class Success extends \Magento\Framework\App\Action\Action
     */
     public function execute()
     {
-        die('Success!!!');
         $this->getResponse()->setRedirect(
             $this->_getUrl('checkout/onepage/success')
         );

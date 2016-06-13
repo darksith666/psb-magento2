@@ -44,10 +44,9 @@ class Redirect extends \Magento\Framework\View\Element\AbstractBlock
 			$form->addField($field, 'hidden', array('name'=>$field, 'value'=>$value));
 		}
 		$html = '<html><body>';
-		$html.= __('You will be redirected to Paysbuy in a few seconds.');
+		$html.= __('You will be redirected to Paysbuy in a few seconds...');
 		$html.= $form->toHtml();
-		// $html.= '<script type="text/javascript">document.getElementById("psb_checkout").submit();</script>';
-		$html.= '<script type="text/javascript">alert("It worked!");</script>';
+		$html.= '<script type="text/javascript">document.getElementById("psb_checkout").submit();</script>';
 		$html.= '</body></html>';
 
 		return $html;

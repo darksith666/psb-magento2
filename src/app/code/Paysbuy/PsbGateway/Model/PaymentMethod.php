@@ -171,18 +171,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		}
 
 		/**
-		 * Get cancel URL.
-		 *
-		 * @param int|null $storeId
-		 *
-		 * @return string
-		 */
-		public function getCancelUrl($storeId = null)
-		{
-				return $this->_getUrl('coinbase/checkout/cancel', $storeId);
-		}
-
-		/**
 		 * Build URL for store.
 		 *
 		 * @param string    $path
@@ -241,8 +229,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			$orderReferenceValue = $orderId; // TODO - check if this is right - used to be $this->getCheckout()->getLastRealOrderId();
 			$merchantId = $this->getConfigData('merchant_id');
 			$postback_url = $this->getNotifyUrl();
-			// $url_r = $this->_getUrl('receive_data/receive_front.php', null);
-			// $url = str_replace("index.php/", "", $url_r);
 			$url = $this->getSuccessUrl();
 			$psb = 'psb';
 			
