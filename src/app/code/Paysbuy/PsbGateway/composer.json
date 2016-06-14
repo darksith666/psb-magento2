@@ -19,5 +19,13 @@
         "psr-4": {
             "Paysbuy\\PsbGateway\\": ""
         }
+    },
+    "extra": {
+        "map": [
+            [
+                "*",
+                "Paysbuy/PsbGateway"
+            ]
+        ]
     }
 }
