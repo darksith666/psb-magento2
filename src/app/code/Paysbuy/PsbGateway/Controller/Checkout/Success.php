@@ -21,8 +21,14 @@ class Success extends \Magento\Framework\App\Action\Action
     protected $_storeManager;
 
     /**
+     *  @var \Magento\Framework\UrlInterface
+     */
+    protected $_urlBuilder;
+
+    /**
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Framework\UrlInterface $urlBuilder
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      */
     public function __construct(
@@ -32,6 +38,7 @@ class Success extends \Magento\Framework\App\Action\Action
     ) {
         $this->_checkoutSession = $checkoutSession;
         $this->_storeManager = $storeManager;
+        $this->_urlBuilder = $context->getUrl();
         parent::__construct($context);
     }
 
