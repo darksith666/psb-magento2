@@ -102,7 +102,7 @@ class Callback extends AppAction
 
 	protected function _handlePaymentReceived() {
 		$currCode = $this->_order->getBaseCurrencyCode();
-		$orderAmount = $this->_order->getGrandTotal()/1;
+		$orderAmount = $this->_order->getBaseGrandTotal()/1;
 		$receivedAmount = $this->_postbackDets['amt']/1;
 		$fmtReceivedAmount = $currCode . sprintf('%.2f', $receivedAmount);
 		if ($orderAmount == $receivedAmount) {

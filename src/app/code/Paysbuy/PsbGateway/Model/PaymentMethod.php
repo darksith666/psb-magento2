@@ -215,7 +215,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			
 			$cur = self::getCurrencyCode($order->getBaseCurrencyCode());
 			
-			$grandTotalAmount = sprintf('%.2f', $order->getGrandTotal());
+			$grandTotalAmount = sprintf('%.2f', $order->getBaseGrandTotal());
 						
 			$orderId = $order->getIncrementId();
 			$item_names = [];
