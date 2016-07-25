@@ -34,20 +34,23 @@ class Redirect extends \Magento\Framework\View\Element\AbstractBlock
 		$order = $this->getData('order');
 		$payMeth = $this->_paymentMethodFactory->create();
 
-		$form = $this->_formFactory->create();
-		$form->setAction($payMeth->getGatewayUrl())
-			->setId('psb_checkout')
-			->setName('psb_checkout')
-			->setMethod('post')
-			->setUseContainer(true);
-		foreach ($payMeth->getCheckoutFormFields($order) as $field=>$value) {
-			$form->addField($field, 'hidden', array('name'=>$field, 'value'=>$value));
-		}
-		$html = '<html><body>';
-		$html.= __('You will be redirected to Paysbuy in a few seconds...');
-		$html.= $form->toHtml();
-		$html.= '<script type="text/javascript">document.getElementById("psb_checkout").submit();</script>';
-		$html.= '</body></html>';
+		$payURL = $payMeth->getPaymentUrl($order);
+		$html = '<!DOCTYPE html><html><body>'.__('You will be redirected to Paysbuy in a few seconds...').'<script type="text/javascript">location.href = \''.$payURL.'\';</script></body></html>';
+
+		// $form = $this->_formFactory->create();
+		// $form->setAction($payMeth->getGatewayUrl())
+		// 	->setId('psb_checkout')
+		// 	->setName('psb_checkout')
+		// 	->setMethod('post')
+		// 	->setUseContainer(true);
+		// foreach ($payMeth->getCheckoutFormFields($order) as $field=>$value) {
+		// 	$form->addField($field, 'hidden', array('name'=>$field, 'value'=>$value));
+		// }
+		// $html = '<html><body>';
+		// $html.= __('You will be redirected to Paysbuy in a few seconds...');
+		// $html.= $form->toHtml();
+		// $html.= '<script type="text/javascript">document.getElementById("psb_checkout").submit();</script>';
+		// $html.= '</body></html>';
 
 		return $html;
 	}

@@ -11,30 +11,47 @@ namespace Paysbuy\PsbGateway\Model;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Order\Payment\Transaction;
 
+include dirname(__FILE__).'/../lib/Paysbuy.php';
+
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 
-		const CGI_URL = 'https://www.paysbuy.com/paynow.aspx';
-		const CGI_URL_TEST = 'https://demo.paysbuy.com/paynow.aspx';
+		// const CGI_URL = 'https://www.paysbuy.com/paynow.aspx';
+		// const CGI_URL_TEST = 'https://demo.paysbuy.com/paynow.aspx';
 
-		const DEFAULT_CURRENCY = 'THB';
+		// const DEFAULT_CURRENCY = 'THB';
+		const DEFAULT_CURRENCY_TYPE = 'TH';
 
 		const URL_SUCCESS = 'psb/checkout/success';
 		const URL_CALLBACK = 'psb/ipn/callback';
 
 		protected $_code = 'psb';
 
+		// // Currency code conversions
+		// static protected $_currCodes = [
+		// 	'THB' => 764,
+		// 	'AUD' => 036,		
+		// 	'GBP' => 826,	
+		// 	'EUR' => 978,		
+		// 	'HKD' => 344,		
+		// 	'JPY' => 392,		
+		// 	'NZD' => 554,
+		// 	'SGD' => 702,	
+		// 	'CHF' => 756,	
+		// 	'USD' => 840	
+		// ];
+
 		// Currency code conversions
-		static protected $_currCodes = [
-			'THB' => 764,
-			'AUD' => 036,		
-			'GBP' => 826,	
-			'EUR' => 978,		
-			'HKD' => 344,		
-			'JPY' => 392,		
-			'NZD' => 554,
-			'SGD' => 702,	
-			'CHF' => 756,	
-			'USD' => 840	
+		static protected $_currTypes = [
+			'THB' => 'TH',
+			'AUD' => 'AU',		
+			'GBP' => 'GB',	
+			'EUR' => 'EU',		
+			'HKD' => 'HK',		
+			'JPY' => 'JP',		
+			'NZD' => 'NZ',
+			'SGD' => 'SG',	
+			'CHF' => 'CH',	
+			'USD' => 'US'	
 		];
 
 
@@ -142,8 +159,12 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 				$stateObject->setIsNotified(false);
 		}
 
-		public static function getCurrencyCode($alpha) {
-			return self::$_currCodes[isset(self::$_currCodes[$alpha]) ? $alpha : self::DEFAULT_CURRENCY]; 
+		// public static function getCurrencyCode($alpha) {
+		// 	return self::$_currCodes[isset(self::$_currCodes[$alpha]) ? $alpha : self::DEFAULT_CURRENCY]; 
+		// }
+
+		public static function getCurrencyType($alpha) {
+			return self::$_currTypes[isset(self::$_currTypes[$alpha]) ? $alpha : self::DEFAULT_CURRENCY_TYPE]; 
 		}
 
 		/**
@@ -155,7 +176,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 */
 		public function getSuccessUrl($storeId = null)
 		{
-				return $this->_getUrl(self::URL_SUCCESS, $storeId);
+			return $this->_getUrl(self::URL_SUCCESS, $storeId);
 		}
 
 		/**
@@ -167,7 +188,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 */
 		public function getNotifyUrl($storeId = null)
 		{
-				return $this->_getUrl(self::URL_CALLBACK, $storeId, false);
+			return $this->_getUrl(self::URL_CALLBACK, $storeId, false);
 		}
 
 		/**
@@ -181,77 +202,123 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 */
 		protected function _getUrl($path, $storeId, $secure = null)
 		{
-				$store = $this->_storeManager->getStore($storeId);
+			$store = $this->_storeManager->getStore($storeId);
 
-				return $this->_urlBuilder->getUrl(
-						$path,
-						['_store' => $store, '_secure' => $secure === null ? $store->isCurrentlySecure() : $secure]
-				);
+			return $this->_urlBuilder->getUrl(
+				$path,
+				['_store' => $store, '_secure' => $secure === null ? $store->isCurrentlySecure() : $secure]
+			);
 		}
 
+		// /**
+		//  * Get main URL for PAYSBUY gateway
+		//  *
+		//  * @return string
+		//  */
+		// public function getGatewayUrl() {
+
+		// 	$test_mode = $this->getConfigData('test_mode');
+		// 	if ($test_mode == '0') {
+		// 		$url = self::CGI_URL;
+		// 	} else {
+		// 		$url = self::CGI_URL_TEST;
+		// 	}
+			
+		// 	return $url;
+		// }
+
 		/**
-		 * Get main URL for PAYSBUY gateway
+		 * Get full URL for payment
+		 *
+		 * @param order		$order
 		 *
 		 * @return string
 		 */
-		public function getGatewayUrl() {
-
-			$test_mode = $this->getConfigData('test_mode');
-			if ($test_mode == '0') {
-				$url = self::CGI_URL;
-			} else {
-				$url = self::CGI_URL_TEST;
-			}
-			
-			return $url;
-		}
-
-		/**
-		 * Get field key=>value list for the checkout form
-		 *
-		 * @return array
-		 */
-		public function getCheckoutFormFields($order) {
-			
-			$cur = self::getCurrencyCode($order->getBaseCurrencyCode());
-			
+		public function getPaymentUrl($order) {
+			$cur = self::getCurrencyType($order->getBaseCurrencyCode());
 			$grandTotalAmount = sprintf('%.2f', $order->getBaseGrandTotal());
-						
 			$orderId = $order->getIncrementId();
+
 			$item_names = [];
 			$items = $order->getItemsCollection();
 			foreach ($items as $item){
 				$item_name = $item->getName();
 				$qty = number_format($item->getQtyOrdered(), 0, '.', ' ');
 				$item_names[] = $item_name . ' x ' . $qty;
-			}	
-			$paysbuy_args['item_name'] 	= sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
-			$orderReferenceValue = $orderId; // TODO - check if this is right - used to be $this->getCheckout()->getLastRealOrderId();
-			$merchantId = $this->getConfigData('merchant_id');
-			$postback_url = $this->getNotifyUrl();
-			$url = $this->getSuccessUrl();
-			$psb = 'psb';
-			
-			$fields = [
-				'psb'								=> $psb,
-				'biz'								=> $merchantId,
-				'amt'								=> $grandTotalAmount, 
-				'currencyCode'			=> $cur,
-				'itm'								=> $paysbuy_args['item_name'],
-				'inv'								=> $orderReferenceValue,
-				'opt_fix_redirect'	=> '1',
-				'postURL'						=> $url,
-				'reqURL'						=> $postback_url,
-			];
-
-			$filtered_fields = [];
-			foreach ($fields as $k=>$v) {
-				$value = str_replace("&","and",$v);
-				$filtered_fields[$k] =  $value;
 			}
-			
-			return $filtered_fields;
+			$itemName = sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
+
+
+			PaysbuyService::setup([
+				'psbID' => $this->getConfigData('merchant_psbid'),
+				'username' => $this->getConfigData('merchant_id'),
+				'secureCode' => $this->getConfigData('merchant_securecode')
+			]);
+			PaysbuyService::$testMode = $this->getConfigData('test_mode') != '0';
+
+
+			$payUrl = PaysbuyPaynow::authenticate([
+				'method' => '1',
+				'language' => 'E',
+				'inv' => $orderId,
+				'itm' => $itemName,
+				'amt' => $grandTotalAmount,
+				'curr_type' => $cur,
+				'resp_front_url' => $this->getSuccessUrl(),
+				'resp_back_url' => $this->getNotifyUrl(),
+				'opt_fix_redirect' => '1'
+			]);
+
+			return $payUrl;
 
 		}
+
+		// /**
+		//  * Get field key=>value list for the checkout form
+		//  *
+		//  * @return array
+		//  */
+		// public function getCheckoutFormFields($order) {
+			
+		// 	$cur = self::getCurrencyCode($order->getBaseCurrencyCode());
+			
+		// 	$grandTotalAmount = sprintf('%.2f', $order->getBaseGrandTotal());
+						
+		// 	$orderId = $order->getIncrementId();
+		// 	$item_names = [];
+		// 	$items = $order->getItemsCollection();
+		// 	foreach ($items as $item){
+		// 		$item_name = $item->getName();
+		// 		$qty = number_format($item->getQtyOrdered(), 0, '.', ' ');
+		// 		$item_names[] = $item_name . ' x ' . $qty;
+		// 	}	
+		// 	$paysbuy_args['item_name'] 	= sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
+		// 	$orderReferenceValue = $orderId; // TODO - check if this is right - used to be $this->getCheckout()->getLastRealOrderId();
+		// 	$merchantId = $this->getConfigData('merchant_id');
+		// 	$postback_url = $this->getNotifyUrl();
+		// 	$url = $this->getSuccessUrl();
+		// 	$psb = 'psb';
+			
+		// 	$fields = [
+		// 		'psb'								=> $psb,
+		// 		'biz'								=> $merchantId,
+		// 		'amt'								=> $grandTotalAmount, 
+		// 		'currencyCode'			=> $cur,
+		// 		'itm'								=> $paysbuy_args['item_name'],
+		// 		'inv'								=> $orderReferenceValue,
+		// 		'opt_fix_redirect'	=> '1',
+		// 		'postURL'						=> $url,
+		// 		'reqURL'						=> $postback_url,
+		// 	];
+
+		// 	$filtered_fields = [];
+		// 	foreach ($fields as $k=>$v) {
+		// 		$value = str_replace("&","and",$v);
+		// 		$filtered_fields[$k] =  $value;
+		// 	}
+			
+		// 	return $filtered_fields;
+
+		// }
 
 }
