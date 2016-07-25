@@ -11,8 +11,6 @@ namespace Paysbuy\PsbGateway\Model;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Order\Payment\Transaction;
 
-include dirname(__FILE__).'/../lib/Paysbuy.php';
-
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 
 		// const CGI_URL = 'https://www.paysbuy.com/paynow.aspx';
