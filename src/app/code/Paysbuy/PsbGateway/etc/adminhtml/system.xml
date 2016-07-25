@@ -12,9 +12,15 @@
                     <label>Title</label>
                 </field>
                 <field id="merchant_id" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Merchant ID</label>
+                    <label>Paysbuy Merchant ID</label>
                 </field>
-                <field id="test_mode" translate="label" type="select" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="merchant_psbid" translate="label" type="text" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Paysbuy PSB ID</label>
+                </field>
+                <field id="merchant_securecode" translate="label" type="text" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Paysbuy Secure Code</label>
+                </field>
+                <field id="test_mode" translate="label" type="select" sortOrder="24" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Debug</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>

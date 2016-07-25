@@ -10,6 +10,8 @@
                 <order_status>pending_payment</order_status>
                 <test_mode>0</test_mode>
                 <merchant_id>example@paysbuy.com</merchant_id>
+                <merchant_psbid>1234567890</merchant_psbid>
+                <merchant_securecode>babababa20202020fefefefe74747474</merchant_securecode>
             </psb>
         </payment>
     </default>
