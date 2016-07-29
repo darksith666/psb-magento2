@@ -247,15 +247,15 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			$itemName = sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
 
 
-			PaysbuyService::setup([
+			\PaysbuyService::setup([
 				'psbID' => $this->getConfigData('merchant_psbid'),
 				'username' => $this->getConfigData('merchant_id'),
 				'securecode' => $this->getConfigData('merchant_securecode')
 			]);
-			PaysbuyService::$testMode = $this->getConfigData('test_mode') != '0';
+			\PaysbuyService::$testMode = $this->getConfigData('test_mode') != '0';
 
 
-			$payUrl = PaysbuyPaynow::authenticate([
+			$payUrl = \PaysbuyPaynow::authenticate([
 				'method' => '1',
 				'language' => 'E',
 				'inv' => $orderId,
