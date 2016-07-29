@@ -8,7 +8,7 @@
         "magento/module-payment": "100.0.*",
         "magento/module-quote": "100.0.*",
         "magento/framework": "100.0.*",
-        "paysbuy/paysbuy-php": "dev-master@dev"
+        "paysbuy/paysbuy-php": "*@dev"
     },
     "minimum-stability": "dev",
     "type": "magento2-module",
