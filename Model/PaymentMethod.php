@@ -250,7 +250,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			\PaysbuyService::setup([
 				'psbID' => $this->getConfigData('merchant_psbid'),
 				'username' => $this->getConfigData('merchant_id'),
-				'securecode' => $this->getConfigData('merchant_securecode')
+				'secureCode' => $this->getConfigData('merchant_securecode')
 			]);
 			\PaysbuyService::$testMode = $this->getConfigData('test_mode') != '0';
 
