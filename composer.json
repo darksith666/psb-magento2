@@ -9,7 +9,9 @@
         "magento/module-quote": "100.0.*",
         "magento/framework": "100.0.*",
         "paysbuy/paysbuy-php": "1.*"
+        "paysbuy/paysbuy-php": "dev-master"
     },
+    "minimum-stability": "dev",
     "type": "magento2-module",
     "version": "1.0.0",
     "license": [
