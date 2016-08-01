@@ -264,7 +264,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 				'curr_type' => $cur,
 				'resp_front_url' => $this->getSuccessUrl(),
 				'resp_back_url' => $this->getNotifyUrl(),
-				'opt_fix_redirect' => '1'
+				'opt_fix_redirect' => '0'
 			]);
 
 			return $payUrl;
