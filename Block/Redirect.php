@@ -35,7 +35,7 @@ class Redirect extends \Magento\Framework\View\Element\AbstractBlock
 		$payMeth = $this->_paymentMethodFactory->create();
 
 		$payURL = $payMeth->getPaymentUrl($order);
-		$html = "<!DOCTYPE html><html><body>".__('You will be redirected to Paysbuy in a few seconds...')."<script type=\"text/javascript\">location.href = '".$payURL."';</script></body></html>";
+		$html = "<!DOCTYPE html><html><body>".__('You will be redirected to Paysbuy in a few seconds...')."<script type=\"text/javascript\">alert('".$payURL."');</script></body></html>";
 
 		// $form = $this->_formFactory->create();
 		// $form->setAction($payMeth->getGatewayUrl())
