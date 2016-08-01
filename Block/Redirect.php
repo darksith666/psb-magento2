@@ -29,6 +29,10 @@ class Redirect extends \Magento\Framework\View\Element\AbstractBlock
 		);
 	}
 
+	protected function _loadCache() {
+		return false;
+	}
+
 	protected function _toHtml() {
 
 		$order = $this->getData('order');
