@@ -45,7 +45,7 @@ class Start extends \Magento\Framework\App\Action\Action
 
         $order = $this->_getOrder();
         $payURL = $this->_paymentMethod->getPaymentUrl($order);
-        return $this->resultRedirectFactory->create()->setUrl($payURL;
+        return $this->_resultRedirectFactory->create()->setUrl($payURL;
 
         // $blockParams = ['data' => ['order' => $order]];
 
