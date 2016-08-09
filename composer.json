@@ -1,6 +1,14 @@
 {
-    "name": "paysbuy/module-magento2-gateway",
+    "name": "paysbuy/magento2-plugin",
     "description": "Accept payment on your Magento2 website with PAYSBUY",
+    "keywords": ["paysbuy", "payment", "debitcard", "creditcard", "magento"],
+    "homepage": "https://github.com/paysbuy/magento2-plugin",
+    "authors": [
+        {
+          "name": "Paysbuy",
+          "email": "support@paysbuy.com"
+        }
+    ],
     "require": {
         "php": "~5.5.0|~5.6.0|~7.0.0",
         "magento/module-sales": "100.0.*",
