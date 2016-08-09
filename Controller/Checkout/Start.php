@@ -10,57 +10,49 @@ namespace Paysbuy\PsbGateway\Controller\Checkout;
 
 class Start extends \Magento\Framework\App\Action\Action
 {
-    /**
-    * @var \Magento\Checkout\Model\Session
-    */
-    protected $_checkoutSession;
+	/**
+	* @var \Magento\Checkout\Model\Session
+	*/
+	protected $_checkoutSession;
 
-    /**
-    * @var \Paysbuy\PsbGateway\Model\PaymentMethod
-    */
-    protected $_paymentMethod;
+	/**
+	* @var \Paysbuy\PsbGateway\Model\PaymentMethod
+	*/
+	protected $_paymentMethod;
 
-    /**
-    * @param \Magento\Framework\App\Action\Context $context
-    * @param \Magento\Checkout\Model\Session $checkoutSession
-    * @param \Paysbuy\PsbGateway\Model\PaymentMethod $paymentMethod
-    */
-    public function __construct(
-    \Magento\Framework\App\Action\Context $context,
-    \Magento\Checkout\Model\Session $checkoutSession,
-    \Paysbuy\PsbGateway\Model\PaymentMethod $paymentMethod
-    ) {
-        $this->_paymentMethod = $paymentMethod;
-        $this->_checkoutSession = $checkoutSession;
-        $this->_resultRedirectFactory = $context->getResultRedirectFactory();
-        parent::__construct($context);
-    }
+	/**
+	* @param \Magento\Framework\App\Action\Context $context
+	* @param \Magento\Checkout\Model\Session $checkoutSession
+	* @param \Paysbuy\PsbGateway\Model\PaymentMethod $paymentMethod
+	*/
+	public function __construct(
+	\Magento\Framework\App\Action\Context $context,
+	\Magento\Checkout\Model\Session $checkoutSession,
+	\Paysbuy\PsbGateway\Model\PaymentMethod $paymentMethod
+	) {
+		$this->_paymentMethod = $paymentMethod;
+		$this->_checkoutSession = $checkoutSession;
+		$this->_resultRedirectFactory = $context->getResultRedirectFactory();
+		parent::__construct($context);
+	}
 
-    /**
-    * Start checkout by requesting checkout code and dispatching customer to PAYSBUY.
-    */
-    public function execute()
-    {
-        // ** JUST DO A REDIRECT HERE INSTEAD?? **
+	/**
+	* Start checkout by requesting checkout code and dispatching customer to PAYSBUY.
+	*/
+	public function execute()
+	{
+		$order = $this->_getOrder();
+		$payURL = $this->_paymentMethod->getPaymentUrl($order);
+		return $this->_resultRedirectFactory->create()->setUrl($payURL);
+	}
 
-        $order = $this->_getOrder();
-        $payURL = $this->_paymentMethod->getPaymentUrl($order);
-        return $this->_resultRedirectFactory->create()->setUrl($payURL);
-
-        // $blockParams = ['data' => ['order' => $order]];
-
-        // $html = $this->_view->getLayout()->createBlock('Paysbuy\PsbGateway\Block\Redirect', '', $blockParams)->toHtml();
-        // $this->getResponse()->setBody($html);
-                
-    }
-
-    /**
-    * Get order object.
-    *
-    * @return \Magento\Sales\Model\Order
-    */
-    protected function _getOrder()
-    {
-        return $this->_checkoutSession->getLastRealOrder();
-    }
+	/**
+	* Get order object.
+	*
+	* @return \Magento\Sales\Model\Order
+	*/
+	protected function _getOrder()
+	{
+		return $this->_checkoutSession->getLastRealOrder();
+	}
 }

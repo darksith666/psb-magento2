@@ -13,30 +13,12 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 
-		// const CGI_URL = 'https://www.paysbuy.com/paynow.aspx';
-		// const CGI_URL_TEST = 'https://demo.paysbuy.com/paynow.aspx';
-
-		// const DEFAULT_CURRENCY = 'THB';
 		const DEFAULT_CURRENCY_TYPE = 'TH';
 
 		const URL_SUCCESS = 'psb/checkout/success';
 		const URL_CALLBACK = 'psb/ipn/callback';
 
 		protected $_code = 'psb';
-
-		// // Currency code conversions
-		// static protected $_currCodes = [
-		// 	'THB' => 764,
-		// 	'AUD' => 036,		
-		// 	'GBP' => 826,	
-		// 	'EUR' => 978,		
-		// 	'HKD' => 344,		
-		// 	'JPY' => 392,		
-		// 	'NZD' => 554,
-		// 	'SGD' => 702,	
-		// 	'CHF' => 756,	
-		// 	'USD' => 840	
-		// ];
 
 		// Currency code conversions
 		static protected $_currTypes = [
@@ -127,16 +109,16 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			$this->_storeManager = $storeManager;
 
 			parent::__construct(
-					$context,
-					$registry,
-					$extensionFactory,
-					$customAttributeFactory,
-					$paymentData,
-					$scopeConfig,
-					$logger,
-					$resource,
-					$resourceCollection,
-					$data
+				$context,
+				$registry,
+				$extensionFactory,
+				$customAttributeFactory,
+				$paymentData,
+				$scopeConfig,
+				$logger,
+				$resource,
+				$resourceCollection,
+				$data
 			);
 		}
 
@@ -148,13 +130,13 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		 */
 		public function initialize($paymentAction, $stateObject)
 		{
-				$payment = $this->getInfoInstance();
-				$order = $payment->getOrder();
-				$order->setCanSendNewEmailFlag(false);
+			$payment = $this->getInfoInstance();
+			$order = $payment->getOrder();
+			$order->setCanSendNewEmailFlag(false);
 
-				$stateObject->setState(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
-				$stateObject->setStatus('pending_payment');
-				$stateObject->setIsNotified(false);
+			$stateObject->setState(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+			$stateObject->setStatus('pending_payment');
+			$stateObject->setIsNotified(false);
 		}
 
 		// public static function getCurrencyCode($alpha) {
@@ -208,23 +190,6 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			);
 		}
 
-		// /**
-		//  * Get main URL for PAYSBUY gateway
-		//  *
-		//  * @return string
-		//  */
-		// public function getGatewayUrl() {
-
-		// 	$test_mode = $this->getConfigData('test_mode');
-		// 	if ($test_mode == '0') {
-		// 		$url = self::CGI_URL;
-		// 	} else {
-		// 		$url = self::CGI_URL_TEST;
-		// 	}
-			
-		// 	return $url;
-		// }
-
 		/**
 		 * Get full URL for payment
 		 *
@@ -270,53 +235,5 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 			return $payUrl;
 
 		}
-
-		// /**
-		//  * Get field key=>value list for the checkout form
-		//  *
-		//  * @return array
-		//  */
-		// public function getCheckoutFormFields($order) {
-			
-		// 	$cur = self::getCurrencyCode($order->getBaseCurrencyCode());
-			
-		// 	$grandTotalAmount = sprintf('%.2f', $order->getBaseGrandTotal());
-						
-		// 	$orderId = $order->getIncrementId();
-		// 	$item_names = [];
-		// 	$items = $order->getItemsCollection();
-		// 	foreach ($items as $item){
-		// 		$item_name = $item->getName();
-		// 		$qty = number_format($item->getQtyOrdered(), 0, '.', ' ');
-		// 		$item_names[] = $item_name . ' x ' . $qty;
-		// 	}	
-		// 	$paysbuy_args['item_name'] 	= sprintf( __('Order %s '), $orderId ) . " - " . implode(', ', $item_names);
-		// 	$orderReferenceValue = $orderId; // TODO - check if this is right - used to be $this->getCheckout()->getLastRealOrderId();
-		// 	$merchantId = $this->getConfigData('merchant_id');
-		// 	$postback_url = $this->getNotifyUrl();
-		// 	$url = $this->getSuccessUrl();
-		// 	$psb = 'psb';
-			
-		// 	$fields = [
-		// 		'psb'								=> $psb,
-		// 		'biz'								=> $merchantId,
-		// 		'amt'								=> $grandTotalAmount, 
-		// 		'currencyCode'			=> $cur,
-		// 		'itm'								=> $paysbuy_args['item_name'],
-		// 		'inv'								=> $orderReferenceValue,
-		// 		'opt_fix_redirect'	=> '1',
-		// 		'postURL'						=> $url,
-		// 		'reqURL'						=> $postback_url,
-		// 	];
-
-		// 	$filtered_fields = [];
-		// 	foreach ($fields as $k=>$v) {
-		// 		$value = str_replace("&","and",$v);
-		// 		$filtered_fields[$k] =  $value;
-		// 	}
-			
-		// 	return $filtered_fields;
-
-		// }
 
 }
