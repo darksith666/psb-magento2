@@ -32,6 +32,7 @@ class Start extends \Magento\Framework\App\Action\Action
     ) {
         $this->_paymentMethod = $paymentMethod;
         $this->_checkoutSession = $checkoutSession;
+        $this->_resultRedirectFactory = $context->getResultRedirectFactory();
         parent::__construct($context);
     }
 
@@ -40,12 +41,16 @@ class Start extends \Magento\Framework\App\Action\Action
     */
     public function execute()
     {
+        // ** JUST DO A REDIRECT HERE INSTEAD?? **
+
         $order = $this->_getOrder();
+        $payURL = $this->_paymentMethod->getPaymentUrl($order);
+        return $this->resultRedirectFactory->create()->setUrl($payURL;
 
-        $blockParams = ['data' => ['order' => $order]];
+        // $blockParams = ['data' => ['order' => $order]];
 
-        $html = $this->_view->getLayout()->createBlock('Paysbuy\PsbGateway\Block\Redirect', '', $blockParams)->toHtml();
-        $this->getResponse()->setBody($html);
+        // $html = $this->_view->getLayout()->createBlock('Paysbuy\PsbGateway\Block\Redirect', '', $blockParams)->toHtml();
+        // $this->getResponse()->setBody($html);
                 
     }
 
