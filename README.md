@@ -15,8 +15,7 @@ By far the easiest way to install the extension is via composer. Simply add the 
   ...
   "other/module": "*",
   "another/module": "0.1.0-alpha89",
-  **"paysbuy/module-magento2-gateway": "0.2.0"**
-  ...
+  <b>"paysbuy/module-magento2-gateway": "0.2.0"</b>
 },
 ...
 ```
