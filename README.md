@@ -1,7 +1,7 @@
 # PAYSBUY extension for Magento eCommerce v2
 
 ## Magento Version Compatibility
-- Magento (CE) 2.0.x
+- Magento (CE) 2.0.x - 2.1.x
 
 ## Dependencies
 - None
@@ -17,7 +17,15 @@ By far the easiest way to install the extension is via composer. Simply add the 
 },
 ...
 </pre>
-Once this is done, simply run `composer update`, and the module should be automatically installed. Alternatively, you may use the "File Transfer" method detailed [here](https://www.quora.com/How-do-I-install-extensions-in-magento2).
+Once this is done, simply run `composer update`, and the module should be automatically installed. If you are installing the module to an existing Magento installation, you will probably need to run the follow commands after running composer:
+
+<pre>
+php bin/magento module:enable Paysbuy_PsbGateway
+php bin/magento setup:upgrade
+php bin/magento setup:di:compile
+</pre>
+
+Alternatively, you may use the "File Transfer" method detailed [here](https://www.quora.com/How-do-I-install-extensions-in-magento2).
 
 When you have installed the module, go to the store's configuration page and locate the payment methods configuration - here you can set up the plugin ready to start accepting payments via the PAYSBUY gateway.
 
