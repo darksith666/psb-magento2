@@ -17,7 +17,7 @@ By far the easiest way to install the extension is via composer. Simply add the 
 },
 ...
 </pre>
-Once this is done, simply run `composer update`, and the module should be automatically installed. If you are installing the module to an existing Magento installation, you will probably need to run the follow commands after running composer:
+Once this is done, simply run `composer update`, and the module should be automatically installed. If you are installing the module to an existing Magento installation, you will probably need to run the following commands after running composer:
 
 <pre>
 php bin/magento module:enable Paysbuy_PsbGateway
