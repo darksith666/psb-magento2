@@ -2,6 +2,7 @@
 
 ## Magento Version Compatibility
 - Magento (CE) 2.0.x - 2.1.x
+- PHP 5.5.22 or above
 
 ## Dependencies
 - None
