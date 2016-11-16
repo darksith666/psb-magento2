@@ -107,7 +107,8 @@ class Callback extends AppAction
 		$fmtReceivedAmount = $currCode . sprintf('%.2f', $receivedAmount);
 		if ($orderAmount == $receivedAmount) {
 			$msg = $this->_makeComment("Received through Paysbuy payment: ", $fmtReceivedAmount);
-			$this->_changeOrderState(\Magento\Sales\Model\Order::STATE_PROCESSING, $msg);
+			$this->_changeOrderState($this->_paymentMethod->getSuccessState(), $msg);
+			//$this->_changeOrderState(\Magento\Sales\Model\Order::STATE_PROCESSING, $msg);
 		} else {
 			$msg = $this->_makeComment("Incorrect amount received through Paysbuy payment: ", $fmtReceivedAmount);
 			$fmtOrderAmount = $currCode . sprintf('%.2f', $orderAmount);

@@ -191,6 +191,15 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 		}
 
 		/**
+		 * Get success state from config
+		 *
+		 * @return string
+		 */
+		public function getSuccessState() {
+			return $this->getConfigData('order_status');
+		}
+
+		/**
 		 * Get full URL for payment
 		 *
 		 * @param order		$order
