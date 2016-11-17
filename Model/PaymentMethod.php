@@ -13,7 +13,7 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 
 class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod {
 
-		const DEFAULT_CURRENCY_TYPE = 'TH';
+		const DEFAULT_CURRENCY_TYPE = 'THB';
 
 		const URL_SUCCESS = 'psb/checkout/success';
 		const URL_CALLBACK = 'psb/ipn/callback';

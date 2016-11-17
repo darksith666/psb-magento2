@@ -62,8 +62,8 @@ class Callback extends AppAction
 		$this->_orderFactory = $orderFactory;
 		$this->_orderSender = $orderSender;
 		$this->_logger = $logger;
-		$this->_postbackDets = _getPostbackDetails();
 		parent::__construct($context);
+		$this->_postbackDets = $this->_getPostbackDetails();
 	}
 
 	/**
@@ -76,14 +76,14 @@ class Callback extends AppAction
 
 			switch ($this->_postbackDets['status']) {
 				case self::STATUS_RECEIVED:
-					_handlePaymentRecieved();
+					$this->_handlePaymentReceived();
 					break;
 				case self::STATUS_WAITCSP:
-					_handlePaymentWaitingCSP();
+					$this->_handlePaymentWaitingCSP();
 					break;
 
 				case self::STATUS_FAILED:
-					_handlePaymentFailed();
+					$this->_handlePaymentFailed();
 					break;
 				default:
 					$this->_handleUnknownCallback($this->_postbackDets['status']);
@@ -134,7 +134,7 @@ class Callback extends AppAction
 	}
 
 	protected function _getPostbackDetails() {
-		$p = $this->request->getPost();
+		$p = $this->getRequest()->getPost();
 		$result = $p['result'];
 		return [
 			'status'    => substr($result, 0, 2),
@@ -149,21 +149,21 @@ class Callback extends AppAction
 
 	protected function _changeOrderState($state, $message) {
 		$this->_order->setState($state, true, $message, 1)->save();
-		$this->_order->setState($state);
+		$this->_order->setStatus($state);
 		$hist = $this->_order->addStatusHistoryComment($message);
 		$hist->setIsCustomerNotified(true);
 		$this->_order->save();
 
 		$this->_orderSender->send($this->_order);
-		/// $this->_order->sendOrderUpdateEmail(true, $message);   /// FIX!
+		/// $this->_order->sendOrderUpdateEmail(true, $message);   /// FIX?
 	}
 
 	protected function _loadOrder($ref)
 	{
 		$order = $this->_orderFactory->create()->loadByIncrementId($ref);
 
-		if (!($this->_order && $this->_order->getId())) {
-			throw new Exception('Could not find Magento order with id $order_id');
+		if (!($order && $order->getId())) {
+			throw new \Exception('Could not find Magento order with id $order_id');
 		}
 
 		return $order;
@@ -182,7 +182,7 @@ class Callback extends AppAction
 			 ->setStatusHeader(400);
 	}
 
-	protected function _makeComment($comment, $uffix = '')
+	protected function _makeComment($comment, $suffix = '')
 	{
 		$fullComment = __($comment) . $suffix;
 		return $fullComment;
