@@ -13,7 +13,7 @@ By far the easiest way to install the extension is via composer. Simply add the 
 <pre>
 ...
 "require": {
-...<b>,</b>
+  ...<b>,</b>
   <b>"paysbuy/module-magento2-gateway": "@stable"</b>
 },
 ...
