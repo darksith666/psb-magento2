@@ -1,5 +1,17 @@
 # PAYSBUY extension for Magento eCommerce v2
 
+## * _IMPORTANT Announcement_ *
+
+PAYSBUY has been acquired by [Omise](http://omise.co). As a result of this, PAYSBUY's online payment services will eventually be shutting down. Merchants should be contacted regarding migration to Omise's online payment services.
+
+An Omise plugin for Magento v2 can be found [here](https://github.com/omise/omise-magento).
+
+Please direct further questions to the Omise [forum](http://forum.omise.com) or [support@omise.co](mailto:support@omise.co)
+
+[https://www.paysbuy.com/news-226.aspx](https://www.paysbuy.com/news-226.aspx)
+
+
+
 ## Magento Version Compatibility
 - Magento (CE) 2.0.x - 2.1.x
 - PHP 5.5.22 or above
