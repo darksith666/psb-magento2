@@ -4,7 +4,8 @@
 
 PAYSBUY has been acquired by [Omise](http://omise.co). As a result of this, PAYSBUY's online payment services will eventually be shutting down. Merchants should be contacted regarding migration to Omise's online payment services.
 
-An Omise plugin for Magento v2 can be found [here](https://github.com/omise/omise-magento).
+An Omise plugin for Magento v2 can be found [here](https://github.com/omise/omise-magento), and further information/advice on migrating to the Omise plugin [here](https://github.com/paysbuy/psb-magento2/blob/master/Omise.md).
+
 
 Please direct further questions to the Omise [forum](http://forum.omise.com) or [support@omise.co](mailto:support@omise.co)
 
